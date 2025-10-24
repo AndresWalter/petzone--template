@@ -38,7 +38,7 @@ useEffect(() => {
 
     // Llamamos a la función
     fetchProducts();
-  }, []); // El array vacío significa que solo se ejecuta una vez al montar
+  }, []); //  array vacío, significa que solo se ejecuta una vez al montar
 
   // Mostramos estado de carga
 if (loading) {
