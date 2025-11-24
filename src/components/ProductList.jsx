@@ -1,92 +1,236 @@
 // src/components/ProductList.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useProducts } from '../context/ProductContext';
+import ProductForm from './ProductForm';
+import ConfirmationModal from './ConfirmationModal';
+import './ProductList.css';
 
-function ProductList({ onAddToCart }) {
-  // Estados para manejar la carga, los datos y los errores
-const [products, setProducts] = useState([]);
-const [loading, setLoading] = useState(true);
-const [error, setError] = useState(null);
+function ProductList() {
+  // ============================================
+  // CONTEXTOS: Cart, Auth, Products
+  // ============================================
+  const { addToCart } = useCart();
+  const { user } = useAuth();
+  const { products, loading, error, eliminarProducto } = useProducts();
 
-  // useEffect: se ejecuta cuando el componente se monta
-useEffect(() => {
-    // Función asíncrona para obtener los productos de la API
-    const fetchProducts = async () => {
-    try {
-        // URL de MockAPI
-        const response = await fetch('https://68f92640deff18f212b8ca24.mockapi.io/api/v1/productos');
-        
-        // Si la respuesta no es OK, lanzamos un error
-        if (!response.ok) {
-        throw new Error(`Error HTTP: ${response.status}`);
-        }
+  // ============================================
+  // ESTADOS LOCALES
+  // ============================================
+  const [addedProduct, setAddedProduct] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, product: null });
 
-        // Convertimos la respuesta a JSON
-        const data = await response.json();
-        
-        // Guardamos los productos en el estado
-        setProducts(data);
-        
-    } catch (err) {
-        // Capturamos cualquier error (red, servidor, etc.)
-        setError(err.message);
-    } finally {
-        // Terminamos la carga, ocurra lo que ocurra
-        setLoading(false);
+  // Verificar si el usuario es administrador
+  const isAdmin = user?.username === 'admin';
+
+  // ============================================
+  // FUNCIÓN: Agregar producto al carrito con feedback visual
+  // ============================================
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    setAddedProduct(product.id);
+
+    // Quitar el feedback después de 1 segundo
+    setTimeout(() => {
+      setAddedProduct(null);
+    }, 1000);
+  };
+
+  // ============================================
+  // FUNCIÓN: Abrir formulario para crear nuevo producto
+  // ============================================
+  const handleNewProduct = () => {
+    setEditingProduct(null);
+    setShowForm(true);
+  };
+
+  // ============================================
+  // FUNCIÓN: Abrir formulario para editar producto
+  // ============================================
+  const handleEditProduct = (product) => {
+    setEditingProduct(product);
+    setShowForm(true);
+  };
+
+  // ============================================
+  // FUNCIÓN: Abrir modal de confirmación para eliminar
+  // ============================================
+  const handleDeleteClick = (product) => {
+    setDeleteModal({ isOpen: true, product });
+  };
+
+  // ============================================
+  // FUNCIÓN: Confirmar eliminación de producto
+  // ============================================
+  const handleConfirmDelete = async () => {
+    const productToDelete = deleteModal.product;
+
+    // Cerrar modal
+    setDeleteModal({ isOpen: false, product: null });
+
+    // Llamar a la función de eliminación del contexto
+    const result = await eliminarProducto(productToDelete.id);
+
+    if (!result.success) {
+      alert(`Error al eliminar: ${result.error}`);
     }
-    };
+  };
 
-    // Llamamos a la función
-    fetchProducts();
-  }, []); //  array vacío, significa que solo se ejecuta una vez al montar
+  // ============================================
+  // FUNCIÓN: Cancelar eliminación
+  // ============================================
+  const handleCancelDelete = () => {
+    setDeleteModal({ isOpen: false, product: null });
+  };
 
-  // Mostramos estado de carga
-if (loading) {
-    return <p>Cargando productos...</p>;
-}
+  // ============================================
+  // FUNCIÓN: Cerrar formulario después de éxito
+  // ============================================
+  const handleFormSuccess = () => {
+    setShowForm(false);
+    setEditingProduct(null);
+  };
 
-  // Mostramos error si ocurrió
-if (error) {
-    return <p style={{ color: 'red' }}>Error: {error}</p>;
-}
+  // ============================================
+  // FUNCIÓN: Cancelar formulario
+  // ============================================
+  const handleFormCancel = () => {
+    setShowForm(false);
+    setEditingProduct(null);
+  };
 
-  // Mostramos los productos si todo fue bien
-return (
-    <div>
-    <h2>Productos Disponibles</h2>
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-{products.map(product => (
-  <div key={product.id} style={{ border: '1px solid #ddd', padding: '15px', width: '200px', textAlign: 'center' }}>
-    <img src={product.image} alt={product.name} style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
-    <h3>{product.name}</h3>
-    <p>${product.price.toFixed(2)}</p>
-    <div style={{ marginTop: '10px' }}>
-      <button onClick={() => onAddToCart(product)} style={{
-        marginRight: '5px',
-        padding: '5px 10px',
-        backgroundColor: '#4CAF50',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer'
-      }}>
-        Agregar al carrito
-      </button>
-      <Link to={`/products/${product.id}`} style={{
-        padding: '5px 10px',
-        backgroundColor: '#2196F3',
-        color: 'white',
-        textDecoration: 'none',
-        borderRadius: '5px'
-      }}>
-        Ver Detalle
-      </Link>
+  // ============================================
+  // RENDERIZADO CONDICIONAL: Estado de carga
+  // ============================================
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Cargando productos...</p>
+      </div>
+    );
+  }
+
+  // ============================================
+  // RENDERIZADO CONDICIONAL: Error
+  // ============================================
+  if (error) {
+    return (
+      <div className="error-container">
+        <span className="error-icon">⚠️</span>
+        <p>Error al cargar productos: {error}</p>
+      </div>
+    );
+  }
+
+  // ============================================
+  // RENDERIZADO PRINCIPAL
+  // ============================================
+  return (
+    <div className="product-list-container">
+      {/* Encabezado con botón de agregar (solo para admin) */}
+      <div className="product-list-header">
+        <div>
+          <h2>🐾 Productos Disponibles</h2>
+          <p className="product-list-subtitle">
+            Encuentra todo lo que tu mascota necesita
+          </p>
+        </div>
+
+        {/* Botón para agregar producto (solo visible para admin) */}
+        {isAdmin && (
+          <button onClick={handleNewProduct} className="btn-add-product">
+            ➕ Agregar Producto
+          </button>
+        )}
+      </div>
+
+      {/* Formulario de producto (crear/editar) */}
+      {showForm && (
+        <ProductForm
+          currentProduct={editingProduct}
+          onCancel={handleFormCancel}
+          onSuccess={handleFormSuccess}
+        />
+      )}
+
+      {/* Grid de productos */}
+      <div className="products-grid">
+        {products.map(product => (
+          <div key={product.id} className="product-card fade-in">
+            <div className="product-image-container">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="product-image"
+              />
+              <div className="product-overlay">
+                <Link to={`/products/${product.id}`} className="btn-view-detail">
+                  Ver Detalle
+                </Link>
+              </div>
+            </div>
+
+            <div className="product-info">
+              <h3 className="product-name">{product.name}</h3>
+              <p className="product-price">${product.price.toFixed(2)}</p>
+
+              {/* Botones de administración (solo para admin) */}
+              {isAdmin && (
+                <div className="admin-actions">
+                  <button
+                    onClick={() => handleEditProduct(product)}
+                    className="btn-edit"
+                  >
+                    ✏️ Editar
+                  </button>
+                  <button
+                    onClick={() => handleDeleteClick(product)}
+                    className="btn-delete"
+                  >
+                    🗑️ Eliminar
+                  </button>
+                </div>
+              )}
+
+              {/* Botón agregar al carrito */}
+              <button
+                onClick={() => handleAddToCart(product)}
+                className={`btn-add-cart ${addedProduct === product.id ? 'added' : ''}`}
+              >
+                {addedProduct === product.id ? (
+                  <>
+                    <span className="btn-icon">✓</span>
+                    ¡Agregado!
+                  </>
+                ) : (
+                  <>
+                    <span className="btn-icon">🛒</span>
+                    Agregar al Carrito
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal de confirmación de eliminación */}
+      <ConfirmationModal
+        isOpen={deleteModal.isOpen}
+        title="⚠️ Eliminar Producto"
+        message={`¿Estás seguro de que deseas eliminar "${deleteModal.product?.name}"? Esta acción no se puede deshacer.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
-  </div>
-))}
-    </div>
-    </div>
-);
+  );
 }
 
 export default ProductList;

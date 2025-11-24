@@ -1,0 +1,179 @@
+/* src/components/ProductForm.css */
+
+/* ============================================ */
+/* Contenedor principal del formulario */
+/* ============================================ */
+.product-form-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 2rem 0;
+    animation: slideIn 0.3s ease-out;
+}
+
+/* ============================================ */
+/* Título del formulario */
+/* ============================================ */
+.form-title {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* ============================================ */
+/* Formulario */
+/* ============================================ */
+.product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ============================================ */
+/* Grupo de campos (label + input + error) */
+/* ============================================ */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #34495e;
+    font-size: 0.95rem;
+}
+
+/* ============================================ */
+/* Estilos de inputs y textarea */
+/* ============================================ */
+.form-group input,
+.form-group textarea {
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* Input con error */
+.input-error {
+    border-color: #e74c3c !important;
+}
+
+.input-error:focus {
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
+}
+
+/* ============================================ */
+/* Mensajes de error de validación */
+/* ============================================ */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: -0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.error-message::before {
+    content: '⚠';
+}
+
+/* ============================================ */
+/* Botones de acción */
+/* ============================================ */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.btn-cancel,
+.btn-submit {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Botón cancelar */
+.btn-cancel {
+    background: #ecf0f1;
+    color: #7f8c8d;
+}
+
+.btn-cancel:hover:not(:disabled) {
+    background: #d5dbdb;
+    transform: translateY(-2px);
+}
+
+/* Botón enviar */
+.btn-submit {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2980b9, #21618c);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+/* Botones deshabilitados */
+.btn-cancel:disabled,
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ============================================ */
+/* Animación de entrada */
+/* ============================================ */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================ */
+/* Responsive */
+/* ============================================ */
+@media (max-width: 768px) {
+    .product-form-container {
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-cancel,
+    .btn-submit {
+        width: 100%;
+    }
+}

@@ -1,46 +1,65 @@
 // src/components/ProductDetail.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import './ProductDetail.css';
 
-function ProductDetail({ products }) {
+function ProductDetail() {
   const { id } = useParams();
-  const navigate = useNavigate(); // Para redirigir si no existe el producto
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
-    const foundProduct = products.find(p => p.id === id);
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`https://68f92640deff18f212b8ca24.mockapi.io/api/v1/productos/${id}`);
 
-    if (foundProduct) {
-      setProduct(foundProduct);
-    } else {
-      setError(`Producto con ID ${id} no encontrado.`);
-    }
-    setLoading(false);
-  }, [id, products]);
+        if (!response.ok) {
+          throw new Error(`Producto no encontrado`);
+        }
+
+        const data = await response.json();
+        setProduct(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  const handleAddToCart = () => {
+    addToCart(product);
+    setAddedToCart(true);
+
+    setTimeout(() => {
+      setAddedToCart(false);
+    }, 2000);
+  };
 
   if (loading) {
-    return <p>Cargando producto...</p>;
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Cargando producto...</p>
+      </div>
+    );
   }
 
-  if (error) {
+  if (error || !product) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px' }}>
-        <h2 style={{ color: 'red' }}>¡Producto no encontrado!</h2>
-        <p>{error}</p>
-        <button 
-          onClick={() => navigate('/products')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}
-        >
+      <div className="error-container">
+        <span className="error-icon">😿</span>
+        <h2>¡Producto no encontrado!</h2>
+        <p>{error || 'El producto que buscas no existe'}</p>
+        <button onClick={() => navigate('/products')} className="btn-back">
           Volver a Productos
         </button>
       </div>
@@ -48,26 +67,48 @@ function ProductDetail({ products }) {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto' }}>
-      <img 
-        src={product.image} 
-        alt={product.name} 
-        style={{ width: '100%', height: '300px', objectFit: 'cover', marginBottom: '15px' }} 
-      />
-      <h2>{product.name}</h2>
-      <p><strong>Precio:</strong> ${product.price.toFixed(2)}</p>
-      <p>{product.description || "Descripción no disponible."}</p>
-      
-      <div style={{ marginTop: '20px' }}>
-        <Link to="/products" style={{
-          marginRight: '10px',
-          padding: '8px 16px',
-          backgroundColor: '#ddd',
-          textDecoration: 'none',
-          borderRadius: '5px'
-        }}>
-          Volver a Productos
-        </Link>
+    <div className="product-detail-container fade-in">
+      <div className="product-detail-card">
+        <div className="product-detail-image">
+          <img src={product.image} alt={product.name} />
+        </div>
+
+        <div className="product-detail-info">
+          <h1>{product.name}</h1>
+
+          <div className="product-price-section">
+            <span className="price-label">Precio:</span>
+            <span className="price-value">${product.price.toFixed(2)}</span>
+          </div>
+
+          <div className="product-description">
+            <h3>Descripción</h3>
+            <p>{product.description || "Este es un producto premium para tu mascota. ¡A tu amigo peludo le encantará!"}</p>
+          </div>
+
+          <div className="product-actions">
+            <button
+              onClick={handleAddToCart}
+              className={`btn-add-to-cart ${addedToCart ? 'added' : ''}`}
+            >
+              {addedToCart ? (
+                <>
+                  <span className="btn-icon">✓</span>
+                  ¡Agregado al Carrito!
+                </>
+              ) : (
+                <>
+                  <span className="btn-icon">🛒</span>
+                  Agregar al Carrito
+                </>
+              )}
+            </button>
+
+            <Link to="/products" className="btn-back-link">
+              ← Volver a Productos
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

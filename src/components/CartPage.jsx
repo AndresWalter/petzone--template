@@ -1,107 +1,149 @@
 // src/components/CartPage.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+import './CartPage.css';
 
-function CartPage({ cartItems, onRemoveFromCart }) {
-  // Calcular total
-const total = cartItems.reduce((sum, item) => sum + item.price, 0).toFixed(2);
+function CartPage() {
+    const { cartItems, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart();
 
-if (cartItems.length === 0) {
+    // Función para manejar cambio de cantidad
+    const handleQuantityChange = (productId, newQuantity) => {
+        const quantity = parseInt(newQuantity);
+        if (quantity > 0) {
+            updateQuantity(productId, quantity);
+        }
+    };
+
+    // Si el carrito está vacío
+    if (cartItems.length === 0) {
+        return (
+            <div className="empty-cart-container">
+                <div className="empty-cart-content">
+                    <span className="empty-cart-icon">🛒</span>
+                    <h2>Tu carrito está vacío</h2>
+                    <p>¡Agrega productos para comenzar a comprar!</p>
+                    <Link to="/products" className="btn-continue-shopping">
+                        <span className="btn-icon">🛍️</span>
+                        Explorar Productos
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    // Si hay productos en el carrito
     return (
-    <div style={{ textAlign: 'center', padding: '40px' }}>
-        <h2>Carrito de Compras</h2>
-        <p>No hay productos en el carrito.</p>
-        <Link to="/products" style={{
-        padding: '10px 20px',
-        backgroundColor: '#4CAF50',
-        color: 'white',
-        textDecoration: 'none',
-        borderRadius: '5px',
-        fontWeight: 'bold'
-        }}>
-        Seguir comprando
-        </Link>
-    </div>
+        <div className="cart-page-container">
+            <div className="cart-header">
+                <h2>🛒 Mi Carrito</h2>
+                <button onClick={clearCart} className="btn-clear-cart">
+                    <span className="btn-icon">🗑️</span>
+                    Vaciar Carrito
+                </button>
+            </div>
+
+            <div className="cart-content">
+                {/* Lista de productos */}
+                <div className="cart-items">
+                    {cartItems.map(item => (
+                        <div key={item.id} className="cart-item fade-in">
+                            <div className="cart-item-image">
+                                <img src={item.image} alt={item.name} />
+                            </div>
+
+                            <div className="cart-item-info">
+                                <h3 className="cart-item-name">{item.name}</h3>
+                                <p className="cart-item-price">${item.price.toFixed(2)} c/u</p>
+                            </div>
+
+                            <div className="cart-item-quantity">
+                                <label htmlFor={`quantity-${item.id}`}>Cantidad:</label>
+                                <div className="quantity-controls">
+                                    <button
+                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                        className="quantity-btn"
+                                        disabled={item.quantity <= 1}
+                                    >
+                                        -
+                                    </button>
+                                    <input
+                                        id={`quantity-${item.id}`}
+                                        type="number"
+                                        min="1"
+                                        value={item.quantity}
+                                        onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                                        className="quantity-input"
+                                    />
+                                    <button
+                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                        className="quantity-btn"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="cart-item-total">
+                                <p className="item-total-label">Subtotal:</p>
+                                <p className="item-total-price">
+                                    ${(item.price * item.quantity).toFixed(2)}
+                                </p>
+                            </div>
+
+                            <button
+                                onClick={() => removeFromCart(item.id)}
+                                className="btn-remove-item"
+                                title="Eliminar producto"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Resumen del carrito */}
+                <div className="cart-summary">
+                    <div className="summary-card">
+                        <h3>Resumen del Pedido</h3>
+
+                        <div className="summary-details">
+                            <div className="summary-row">
+                                <span>Productos:</span>
+                                <span>{cartItems.reduce((sum, item) => sum + item.quantity, 0)} items</span>
+                            </div>
+
+                            <div className="summary-row">
+                                <span>Subtotal:</span>
+                                <span>${cartTotal.toFixed(2)}</span>
+                            </div>
+
+                            <div className="summary-row">
+                                <span>Envío:</span>
+                                <span className="free-shipping">¡Gratis! 🎉</span>
+                            </div>
+
+                            <div className="summary-divider"></div>
+
+                            <div className="summary-row summary-total">
+                                <span>Total:</span>
+                                <span>${cartTotal.toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        <Link to="/checkout" className="btn-checkout">
+                            <span className="btn-icon">💳</span>
+                            Proceder al Pago
+                        </Link>
+
+                        <Link to="/products" className="btn-continue">
+                            ← Seguir Comprando
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
-}
-
-return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
-    <h2>Carrito de Compras</h2>
-    <ul style={{ listStyle: 'none', padding: 0 }}>
-        {cartItems.map(item => (
-        <li key={item.id} style={{
-            marginBottom: '15px',
-            padding: '15px',
-            border: '1px solid #ddd',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-        }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <img 
-                src={item.image} 
-                alt={item.name} 
-                style={{ width: '60px', height: '60px', objectFit: 'cover' }} 
-            />
-            <div>
-                <h3>{item.name}</h3>
-                <p>${item.price.toFixed(2)}</p>
-            </div>
-            </div>
-            <button 
-            onClick={() => onRemoveFromCart(item.id)}
-            style={{
-                padding: '5px 10px',
-                backgroundColor: '#f44336',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer'
-            }}
-            >
-            Quitar
-            </button>
-        </li>
-        ))}
-    </ul>
-
-    <div style={{
-        marginTop: '20px',
-        padding: '15px',
-        backgroundColor: '#f5f5f5',
-        borderRadius: '5px',
-        textAlign: 'right'
-    }}>
-        <strong>Total: ${total}</strong>
-    </div>
-
-    <div style={{ marginTop: '20px', textAlign: 'center' }}>
-        <button style={{
-        padding: '10px 20px',
-        backgroundColor: '#4CAF50',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        fontSize: '16px'
-        }}>
-        Proceder al Pago
-        </button>
-    </div>
-
-    <div style={{ marginTop: '20px' }}>
-        <Link to="/products" style={{
-        padding: '8px 16px',
-        backgroundColor: '#ddd',
-        textDecoration: 'none',
-        borderRadius: '5px'
-        }}>
-        Seguir comprando
-        </Link>
-    </div>
-    </div>
-);
 }
 
 export default CartPage;
