@@ -1,6 +1,7 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
@@ -22,6 +23,7 @@ function App() {
           <Router>
             <Navbar />
             <Layout>
+              <ToastContainer position="top-right" autoClose={3000} />
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/products" element={<ProductList />} />
