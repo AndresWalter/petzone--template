@@ -216,7 +216,7 @@ function ProductList() {
         ) : (
           <div className="row g-4">
             {currentProducts.map(product => (
-              <div key={product.id} className="col-12 col-sm-6 col-lg-4 col-xl-3">
+              <div key={product.id} className="col-12 col-md-6 col-lg-4 col-xl-3">
                 <StyledCard>
                   <StyledCardImage>
                     <img src={product.image} alt={product.name} onError={(e) => { e.target.src = 'https://via.placeholder.com/300?text=No+Image'; }} />

@@ -24,7 +24,13 @@ function ProductDetail() {
         }
 
         const data = await response.json();
-        setProduct(data);
+        // Normalizar datos igual que en el contexto
+        const normalizedProduct = {
+          ...data,
+          image: data.image || data.imagen || 'https://via.placeholder.com/300',
+          description: data.description || data.descripcion || ''
+        };
+        setProduct(normalizedProduct);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -70,7 +76,11 @@ function ProductDetail() {
     <div className="product-detail-container fade-in">
       <div className="product-detail-card">
         <div className="product-detail-image">
-          <img src={product.image} alt={product.name} />
+          <img
+            src={product.image}
+            alt={product.name}
+            onError={(e) => { e.target.src = 'https://via.placeholder.com/300?text=No+Image'; }}
+          />
         </div>
 
         <div className="product-detail-info">

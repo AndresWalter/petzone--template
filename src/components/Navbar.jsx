@@ -1,10 +1,9 @@
-// src/components/Navbar.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { FaPaw, FaHome, FaShoppingBag, FaShoppingCart, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { FaPaw, FaHome, FaShoppingBag, FaShoppingCart, FaUser, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa';
 
 // ==========================================
 // STYLED COMPONENTS (NAVBAR)
@@ -36,10 +35,23 @@ const LogoLink = styled(Link)`
   font-size: 1.5rem;
   font-weight: 800;
   transition: transform 0.3s ease;
+  z-index: 1001; /* Ensure logo is above mobile menu */
 
   &:hover {
     transform: scale(1.05);
     color: #ecf0f1;
+  }
+`;
+
+const MobileIcon = styled.div`
+  display: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  z-index: 1001;
+
+  @media (max-width: 768px) {
+    display: block;
   }
 `;
 
@@ -49,7 +61,19 @@ const NavLinks = styled.div`
   align-items: center;
 
   @media (max-width: 768px) {
-    display: none; /* Ocultar en móvil por simplicidad en este paso */
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 70%;
+    background: #2c3e50;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    transform: ${({ $isOpen }) => ($isOpen ? 'translateX(0)' : 'translateX(100%)')};
+    transition: transform 0.3s ease-in-out;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.2);
   }
 `;
 
@@ -78,6 +102,12 @@ const NavLinkItem = styled(Link)`
     color: white;
     font-weight: 700;
   `}
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    width: 80%;
+    justify-content: center;
+  }
 `;
 
 const CartBadge = styled.span`
@@ -97,6 +127,29 @@ const UserSection = styled.div`
   display: flex;
   align-items: center;
   gap: 1.5rem;
+
+  @media (max-width: 768px) {
+     /* Move UserSection inside NavLinks for mobile or keep separate? 
+        For simplicity, let's keep it visible but maybe adjust spacing.
+        Actually, let's put it inside the mobile menu for cleaner look on mobile.
+     */
+     display: none; 
+  }
+`;
+
+// Mobile User Section inside menu
+const MobileUserSection = styled.div`
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 80%;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 1.5rem;
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
 `;
 
 const UserGreeting = styled.div`
@@ -147,52 +200,79 @@ const LoginButton = styled(Link)`
 `;
 
 function Navbar() {
-    const { cartCount } = useCart();
-    const { user, logout, isAuthenticated } = useAuth();
-    const location = useLocation();
+  const { cartCount } = useCart();
+  const { user, logout, isAuthenticated } = useAuth();
+  const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
 
-    return (
-        <NavContainer>
-            <NavContent>
-                {/* Logo */}
-                <LogoLink to="/">
-                    <FaPaw /> PetZone
-                </LogoLink>
+  const toggleMenu = () => setIsOpen(!isOpen);
+  const closeMenu = () => setIsOpen(false);
 
-                {/* Enlaces Centrales */}
-                <NavLinks>
-                    <NavLinkItem to="/" $active={location.pathname === '/'}>
-                        <FaHome /> Inicio
-                    </NavLinkItem>
-                    <NavLinkItem to="/products" $active={location.pathname === '/products'}>
-                        <FaShoppingBag /> Productos
-                    </NavLinkItem>
-                    <NavLinkItem to="/cart" $active={location.pathname === '/cart'}>
-                        <FaShoppingCart /> Carrito
-                        {cartCount > 0 && <CartBadge>{cartCount}</CartBadge>}
-                    </NavLinkItem>
-                </NavLinks>
+  return (
+    <NavContainer>
+      <NavContent>
+        {/* Logo */}
+        <LogoLink to="/" onClick={closeMenu}>
+          <FaPaw /> PetZone
+        </LogoLink>
 
-                {/* Sección de Usuario (Derecha) */}
-                <UserSection>
-                    {isAuthenticated ? (
-                        <>
-                            <UserGreeting>
-                                <FaUser /> Hola, <strong>{user.name}</strong>
-                            </UserGreeting>
-                            <LogoutButton onClick={logout}>
-                                <FaSignOutAlt /> Salir
-                            </LogoutButton>
-                        </>
-                    ) : (
-                        <LoginButton to="/login">
-                            Iniciar Sesión
-                        </LoginButton>
-                    )}
-                </UserSection>
-            </NavContent>
-        </NavContainer>
-    );
+        {/* Mobile Icon */}
+        <MobileIcon onClick={toggleMenu}>
+          {isOpen ? <FaTimes /> : <FaBars />}
+        </MobileIcon>
+
+        {/* Enlaces Centrales */}
+        <NavLinks $isOpen={isOpen}>
+          <NavLinkItem to="/" $active={location.pathname === '/'} onClick={closeMenu}>
+            <FaHome /> Inicio
+          </NavLinkItem>
+          <NavLinkItem to="/products" $active={location.pathname === '/products'} onClick={closeMenu}>
+            <FaShoppingBag /> Productos
+          </NavLinkItem>
+          <NavLinkItem to="/cart" $active={location.pathname === '/cart'} onClick={closeMenu}>
+            <FaShoppingCart /> Carrito
+            {cartCount > 0 && <CartBadge>{cartCount}</CartBadge>}
+          </NavLinkItem>
+
+          {/* Mobile User Section */}
+          <MobileUserSection>
+            {isAuthenticated ? (
+              <>
+                <UserGreeting>
+                  <FaUser /> Hola, <strong>{user.name}</strong>
+                </UserGreeting>
+                <LogoutButton onClick={() => { logout(); closeMenu(); }}>
+                  <FaSignOutAlt /> Salir
+                </LogoutButton>
+              </>
+            ) : (
+              <LoginButton to="/login" onClick={closeMenu}>
+                Iniciar Sesión
+              </LoginButton>
+            )}
+          </MobileUserSection>
+        </NavLinks>
+
+        {/* Sección de Usuario (Desktop) */}
+        <UserSection>
+          {isAuthenticated ? (
+            <>
+              <UserGreeting>
+                <FaUser /> Hola, <strong>{user.name}</strong>
+              </UserGreeting>
+              <LogoutButton onClick={logout}>
+                <FaSignOutAlt /> Salir
+              </LogoutButton>
+            </>
+          ) : (
+            <LoginButton to="/login">
+              Iniciar Sesión
+            </LoginButton>
+          )}
+        </UserSection>
+      </NavContent>
+    </NavContainer>
+  );
 }
 
 export default Navbar;

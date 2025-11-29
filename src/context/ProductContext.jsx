@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // URL base de la API de productos
-const API_URL = 'https://68f92640deff18f212b8ca24.mockapi.io/api/v1/productos';
+const API_URL = process.env.REACT_APP_API_URL || 'https://68f92640deff18f212b8ca24.mockapi.io/api/v1/productos';
 
 // Datos de respaldo por si falla la API
 const FALLBACK_PRODUCTS = [
