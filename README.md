@@ -1,39 +1,46 @@
-# Getting Started with Create React App
+# Gestor de Productos con React & Context API
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Descripción
+Esta aplicación es un sistema completo para la gestión de productos de una tienda de mascotas ("PetZone"). Permite a los administradores administrar el inventario (CRUD) y a los usuarios explorar productos, buscar, filtrar y agregarlos a un carrito de compras. La aplicación cuenta con un diseño moderno, responsivo y una experiencia de usuario fluida.
 
-Proyecto Talento Tech_2025
+## Tecnologías Utilizadas
+*   **React**: Biblioteca principal para la interfaz de usuario.
+*   **Context API**: Para la gestión del estado global (Carrito, Autenticación, Productos).
+*   **Bootstrap**: Framework CSS para la estructura y responsividad (Grilla, Utilidades).
+*   **Styled-Components**: Para estilos personalizados y componentes reutilizables con CSS-in-JS.
+*   **React Toastify**: Para notificaciones y feedback visual al usuario.
+*   **React Icons**: Para la integración de iconos vectoriales.
+*   **React Helmet**: Para la gestión de metadatos y SEO.
+*   **MockAPI**: Backend simulado para persistencia de datos y operaciones CRUD.
 
-## Available Scripts
+## Instalación y Uso
 
-In the project directory, you can run:
+Sigue estos pasos para ejecutar el proyecto localmente:
 
-### `npm start`
+1.  **Clonar el repositorio (o descargar los archivos):**
+    Asegúrate de tener los archivos del proyecto en tu máquina local.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+2.  **Instalar dependencias:**
+    Abre una terminal en la carpeta raíz del proyecto y ejecuta:
+    ```bash
+    npm install
+    ```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+3.  **Ejecutar la aplicación:**
+    Inicia el servidor de desarrollo con:
+    ```bash
+    npm start
+    ```
+    La aplicación se abrirá automáticamente en tu navegador en `http://localhost:3000`.
 
-### `npm test`
+## Características Principales
+*   **CRUD Completo**: Crear, Leer, Actualizar y Eliminar productos (solo administradores).
+*   **Búsqueda en Tiempo Real**: Filtrado instantáneo de productos por nombre.
+*   **Paginación**: Navegación eficiente a través de grandes listas de productos.
+*   **Carrito de Compras**: Funcionalidad para agregar productos y gestionar el pedido.
+*   **Autenticación**: Sistema de login simulado con roles de usuario y administrador.
+*   **Diseño Responsivo**: Adaptable a dispositivos móviles, tablets y escritorio.
+*   **Feedback Visual**: Notificaciones toast para acciones exitosas o errores.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
+## Autor
+**Andres Walter**

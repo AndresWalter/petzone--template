@@ -224,3 +224,57 @@
         position: static;
     }
 }
+
+@media (max-width: 768px) {
+    .cart-item {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "image"
+            "info"
+            "quantity"
+            "total"
+            "remove";
+        text-align: center;
+        gap: 10px;
+    }
+
+    .cart-item-image {
+        margin: 0 auto;
+        width: 120px;
+        height: 120px;
+        grid-area: image;
+    }
+
+    .cart-item-info {
+        grid-area: info;
+    }
+
+    .cart-item-quantity {
+        grid-area: quantity;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cart-item-total {
+        grid-area: total;
+        text-align: center;
+    }
+
+    .btn-remove-item {
+        grid-area: remove;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    
+    .item-total-label {
+        display: inline;
+        margin-right: 5px;
+    }
+    
+    .item-total-price {
+        display: inline;
+    }
+}
