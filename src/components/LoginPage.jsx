@@ -1,12 +1,13 @@
 // src/components/LoginPage.jsx
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './LoginPage.css';
 
 function LoginPage() {
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [formData, setFormData] = useState({
         username: '',
@@ -14,6 +15,9 @@ function LoginPage() {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // Obtener la página previa o ir a /products por defecto
+    const from = location.state?.from?.pathname || '/products';
 
     // Manejar cambios en los inputs
     const handleChange = (e) => {
@@ -26,7 +30,7 @@ function LoginPage() {
     };
 
     // Manejar envío del formulario
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
@@ -38,20 +42,21 @@ function LoginPage() {
             return;
         }
 
-        // Simular delay de red
-        setTimeout(() => {
-            const result = login(formData.username, formData.password);
+        try {
+            const result = await login(formData.username, formData.password);
 
             if (result.success) {
-                // Login exitoso - redirigir a productos
-                navigate('/products');
+                // Login exitoso - redirigir a la página previa o productos
+                navigate(from, { replace: true });
             } else {
                 // Login fallido - mostrar error
                 setError(result.error);
             }
-
+        } catch (err) {
+            setError('Ocurrió un error inesperado');
+        } finally {
             setLoading(false);
-        }, 700);
+        }
     };
 
     return (
@@ -129,7 +134,6 @@ function LoginPage() {
                         <p className="demo-title">💡 Credenciales de prueba:</p>
                         <div className="demo-list">
                             <code>admin / admin123</code>
-                            <code>user / user123</code>
                             <code>demo / demo</code>
                         </div>
                     </div>

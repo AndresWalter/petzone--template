@@ -246,9 +246,14 @@ function Navbar() {
                 </LogoutButton>
               </>
             ) : (
-              <LoginButton to="/login" onClick={closeMenu}>
-                Iniciar Sesión
-              </LoginButton>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', alignItems: 'center' }}>
+                <LoginButton to="/login" onClick={closeMenu}>
+                  Iniciar Sesión
+                </LoginButton>
+                <LoginButton to="/register" onClick={closeMenu} style={{ background: 'transparent', border: '1px solid white', color: 'white' }}>
+                  Registrarse
+                </LoginButton>
+              </div>
             )}
           </MobileUserSection>
         </NavLinks>
@@ -265,9 +270,14 @@ function Navbar() {
               </LogoutButton>
             </>
           ) : (
-            <LoginButton to="/login">
-              Iniciar Sesión
-            </LoginButton>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <LoginButton to="/login">
+                Iniciar Sesión
+              </LoginButton>
+              <LoginButton to="/register" style={{ background: 'transparent', border: '1px solid white', color: 'white' }}>
+                Registrarse
+              </LoginButton>
+            </div>
           )}
         </UserSection>
       </NavContent>
