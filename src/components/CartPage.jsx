@@ -1,11 +1,32 @@
 // src/components/CartPage.jsx
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useProducts } from '../context/ProductContext';
 import './CartPage.css';
 
 function CartPage() {
     const { cartItems, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart();
+    const { products } = useProducts();
+
+    // Sincronizar datos del carrito con productos actualizados
+    const syncedCartItems = useMemo(() => {
+        return cartItems.map(cartItem => {
+            const currentProduct = products.find(p => p.id === cartItem.id);
+            if (currentProduct) {
+                // Usar datos actualizados del producto
+                return {
+                    ...currentProduct,
+                    quantity: cartItem.quantity // Mantener la cantidad del carrito
+                };
+            }
+            // Si el producto ya no existe, mantener el item del carrito
+            return cartItem;
+        }).filter(item => {
+            // Filtrar productos que fueron eliminados
+            return products.some(p => p.id === item.id);
+        });
+    }, [cartItems, products]);
 
     // Función para manejar cambio de cantidad
     const handleQuantityChange = (productId, newQuantity) => {
@@ -16,7 +37,7 @@ function CartPage() {
     };
 
     // Si el carrito está vacío
-    if (cartItems.length === 0) {
+    if (syncedCartItems.length === 0) {
         return (
             <div className="empty-cart-container">
                 <div className="empty-cart-content">
@@ -46,7 +67,7 @@ function CartPage() {
             <div className="cart-content">
                 {/* Lista de productos */}
                 <div className="cart-items">
-                    {cartItems.map(item => (
+                    {syncedCartItems.map(item => (
                         <div key={item.id} className="cart-item fade-in">
                             <div className="cart-item-image">
                                 <img src={item.image} alt={item.name} />
@@ -110,7 +131,7 @@ function CartPage() {
                         <div className="summary-details">
                             <div className="summary-row">
                                 <span>Productos:</span>
-                                <span>{cartItems.reduce((sum, item) => sum + item.quantity, 0)} items</span>
+                                <span>{syncedCartItems.reduce((sum, item) => sum + item.quantity, 0)} items</span>
                             </div>
 
                             <div className="summary-row">

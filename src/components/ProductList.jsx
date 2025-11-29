@@ -1,5 +1,5 @@
 // src/components/ProductList.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { toast } from 'react-toastify';
@@ -11,8 +11,10 @@ import { useAuth } from '../context/AuthContext';
 import { useProducts } from '../context/ProductContext';
 
 // Componentes
-import FormModal from './FormModal'; // Importar FormModal
+import FormModal from './FormModal';
 import ConfirmationModal from './ConfirmationModal';
+import SearchBar from './SearchBar';
+import Pagination from './Pagination';
 
 // Styled Components
 import {
@@ -33,7 +35,7 @@ function ProductList() {
   // ============================================
   const { addToCart } = useCart();
   const { user } = useAuth();
-  const { products, loading, error, eliminarProducto } = useProducts();
+  const { products, loading, eliminarProducto } = useProducts();
 
   // ============================================
   // ESTADOS LOCALES
@@ -43,8 +45,34 @@ function ProductList() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, product: null });
 
+  // Estados para búsqueda y paginación
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(6); // 6 productos por página
+
   // Verificar si es admin
   const isAdmin = user?.username === 'admin';
+
+  // ============================================
+  // LÓGICA DE FILTRADO Y PAGINACIÓN
+  // ============================================
+
+  // PASO 1: Filtrar productos según searchTerm
+  const filteredProducts = (products || []).filter(product =>
+    product && product.name && product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // PASO 2: Calcular índices para paginación
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+
+  // PASO 3: Obtener productos de la página actual
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  // PASO 4: Reset de página cuando cambia la búsqueda
+  useEffect(() => {
+    setCurrentPage(1); // Resetear a página 1 cuando se filtra
+  }, [searchTerm]);
 
   // ============================================
   // HANDLERS
@@ -100,6 +128,12 @@ function ProductList() {
   const handleFormClose = () => {
     setShowForm(false);
     setEditingProduct(null);
+  };
+
+  // Función de paginación
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // ============================================
@@ -158,62 +192,92 @@ function ProductList() {
           onSuccess={handleFormSuccess}
         />
 
+        {/* Search Bar */}
+        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
         {/* Products Grid */}
-        <div className="row g-4">
-          {products.map(product => (
-            <div key={product.id} className="col-12 col-sm-6 col-lg-4 col-xl-3">
-              <StyledCard>
-                <StyledCardImage>
-                  <img src={product.image} alt={product.name} onError={(e) => { e.target.src = 'https://via.placeholder.com/300?text=No+Image'; }} />
-                </StyledCardImage>
+        {currentProducts.length === 0 ? (
+          <div className="text-center py-5">
+            <h4 style={{ color: '#6b7280' }}>😔 No se encontraron productos</h4>
+            <p style={{ color: '#9ca3af' }}>
+              {searchTerm ?
+                `No hay productos que coincidan con "${searchTerm}"` :
+                'No hay productos disponibles'}
+            </p>
+            {searchTerm && (
+              <StyledButton
+                $variant="primary"
+                onClick={() => setSearchTerm('')}
+              >
+                Limpiar búsqueda
+              </StyledButton>
+            )}
+          </div>
+        ) : (
+          <div className="row g-4">
+            {currentProducts.map(product => (
+              <div key={product.id} className="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <StyledCard>
+                  <StyledCardImage>
+                    <img src={product.image} alt={product.name} onError={(e) => { e.target.src = 'https://via.placeholder.com/300?text=No+Image'; }} />
+                  </StyledCardImage>
 
-                <StyledCardBody>
-                  <StyledProductTitle>{product.name}</StyledProductTitle>
-                  <StyledProductPrice>${product.price.toFixed(2)}</StyledProductPrice>
+                  <StyledCardBody>
+                    <StyledProductTitle>{product.name}</StyledProductTitle>
+                    <StyledProductPrice>${product.price.toFixed(2)}</StyledProductPrice>
 
-                  <div className="mt-auto d-flex flex-column gap-2">
-                    <Link to={`/products/${product.id}`} style={{ textDecoration: 'none' }}>
-                      <StyledButton $variant="secondary" $fullWidth>
-                        Ver Detalle
+                    <div className="mt-auto d-flex flex-column gap-2">
+                      <Link to={`/products/${product.id}`} style={{ textDecoration: 'none' }}>
+                        <StyledButton $variant="secondary" $fullWidth>
+                          Ver Detalle
+                        </StyledButton>
+                      </Link>
+
+                      <StyledButton
+                        $variant={addedProduct === product.id ? "success" : "primary"}
+                        $fullWidth
+                        onClick={() => handleAddToCart(product)}
+                        disabled={addedProduct === product.id}
+                      >
+                        {addedProduct === product.id ? <FaCheck /> : <FaShoppingCart />}
+                        {addedProduct === product.id ? '¡Agregado!' : 'Agregar'}
                       </StyledButton>
-                    </Link>
 
-                    <StyledButton
-                      $variant={addedProduct === product.id ? "success" : "primary"}
-                      $fullWidth
-                      onClick={() => handleAddToCart(product)}
-                      disabled={addedProduct === product.id}
-                    >
-                      {addedProduct === product.id ? <FaCheck /> : <FaShoppingCart />}
-                      {addedProduct === product.id ? '¡Agregado!' : 'Agregar'}
-                    </StyledButton>
+                      {isAdmin && (
+                        <div className="d-flex gap-2 mt-2 pt-2 border-top">
+                          <StyledIconButton
+                            $variant="warning"
+                            onClick={() => handleEditProduct(product)}
+                            aria-label={`Editar ${product.name}`}
+                            style={{ flex: 1 }}
+                          >
+                            <FaEdit />
+                          </StyledIconButton>
+                          <StyledIconButton
+                            $variant="danger"
+                            onClick={() => handleDeleteClick(product)}
+                            aria-label={`Eliminar ${product.name}`}
+                            style={{ flex: 1 }}
+                          >
+                            <FaTrash />
+                          </StyledIconButton>
+                        </div>
+                      )}
+                    </div>
+                  </StyledCardBody>
+                </StyledCard>
+              </div>
+            ))}
+          </div>
+        )}
 
-                    {isAdmin && (
-                      <div className="d-flex gap-2 mt-2 pt-2 border-top">
-                        <StyledIconButton
-                          $variant="warning"
-                          onClick={() => handleEditProduct(product)}
-                          aria-label={`Editar ${product.name}`}
-                          style={{ flex: 1 }}
-                        >
-                          <FaEdit />
-                        </StyledIconButton>
-                        <StyledIconButton
-                          $variant="danger"
-                          onClick={() => handleDeleteClick(product)}
-                          aria-label={`Eliminar ${product.name}`}
-                          style={{ flex: 1 }}
-                        >
-                          <FaTrash />
-                        </StyledIconButton>
-                      </div>
-                    )}
-                  </div>
-                </StyledCardBody>
-              </StyledCard>
-            </div>
-          ))}
-        </div>
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          productsPerPage={productsPerPage}
+          totalProducts={filteredProducts.length}
+          paginate={paginate}
+        />
       </div>
 
       {/* Delete Confirmation Modal */}
