@@ -32,7 +32,7 @@ function CheckoutPage() {
     const handleConfirmOrder = () => {
         setOrderConfirmed(true);
 
-        // Limpiar carrito después de 2 segundos
+        // Limpiar carrito después de 3 segundos
         setTimeout(() => {
             clearCart();
             navigate('/products');

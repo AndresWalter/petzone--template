@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Reviews from './Reviews'; // Importar Reseñas
+import SubscriptionBanner from './SubscriptionBanner';
 
 const HeroSection = styled.div`
   background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1450778869180-41d0601e046e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
@@ -53,20 +54,23 @@ const CTAButton = styled(Link)`
 `;
 
 function Home() {
-    return (
-        <>
-            <HeroSection>
-                <HeroContent>
-                    <Title>PetZone 🐶🐱</Title>
-                    <Subtitle>Tu tienda favorita para mascotas</Subtitle>
-                    <CTAButton to="/products">Ver Productos</CTAButton>
-                </HeroContent>
-            </HeroSection>
+  return (
+    <>
+      <HeroSection>
+        <HeroContent>
+          <Title>PetZone 🐶🐱</Title>
+          <Subtitle>Tu tienda favorita para mascotas</Subtitle>
+          <CTAButton to="/products">Ver Productos</CTAButton>
+        </HeroContent>
+      </HeroSection>
 
-            {/* Sección de Reseñas */}
-            <Reviews />
-        </>
-    );
+      {/* Sección de Reseñas */}
+      <Reviews />
+
+      {/* Banner de Suscripción */}
+      <SubscriptionBanner />
+    </>
+  );
 }
 
 export default Home;

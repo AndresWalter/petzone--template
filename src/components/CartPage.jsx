@@ -28,7 +28,7 @@ function CartPage() {
         });
     }, [cartItems, products]);
 
-    // Función para manejar cambio de cantidad
+    // Para manejar cambio de cantidad
     const handleQuantityChange = (productId, newQuantity) => {
         const quantity = parseInt(newQuantity);
         if (quantity > 0) {

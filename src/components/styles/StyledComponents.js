@@ -9,6 +9,10 @@ export const StyledPageContainer = styled.div`
   padding: 2rem 0;
   min-height: 80vh;
   background-color: #f8f9fa;
+
+  @media (max-width: 768px) {
+    padding: 1rem 0; /* Menos padding vertical en móviles */
+  }
 `;
 
 export const StyledHeader = styled.div`
@@ -38,6 +42,7 @@ export const StyledCard = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   height: 100%;
+  width: 100%; /* Asegura que ocupe todo el ancho de la columna */
   display: flex;
   flex-direction: column;
 
@@ -48,14 +53,21 @@ export const StyledCard = styled.div`
 `;
 
 export const StyledCardImage = styled.div`
-  height: 220px;
+  width: 100%;
+  height: 220px; /* Altura base */
   overflow: hidden;
   position: relative;
+  background-color: #f0f0f0; /* Placeholder color */
+
+  @media (max-width: 576px) {
+    height: 180px; /* Altura ajustada para móviles */
+  }
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Mantiene la proporción y cubre el área */
+    object-position: center;
     transition: transform 0.5s ease;
   }
 

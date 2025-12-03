@@ -83,7 +83,7 @@ export const ProductProvider = ({ children }) => {
             // En caso de error, usar datos de respaldo para que la UI no quede vacía
             setProducts(FALLBACK_PRODUCTS);
             // No seteamos error global para que no muestre la alerta roja, 
-            // pero podríamos mostrar un toast informativo si quisiéramos.
+
         } finally {
             setLoading(false);
         }

@@ -6,6 +6,9 @@ import { FaStar, FaQuoteLeft } from 'react-icons/fa';
 const ReviewsContainer = styled.section`
   padding: 4rem 0;
   background-color: white;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 20px;
 `;
 
 const SectionTitle = styled.h2`
@@ -87,56 +90,56 @@ const Stars = styled.div`
 `;
 
 const reviewsData = [
-    {
-        id: 1,
-        name: "María González",
-        image: "https://randomuser.me/api/portraits/women/44.jpg",
-        text: "¡Me encanta PetZone! Encontré la cama perfecta para mi Golden Retriever. La calidad es excelente y el envío fue súper rápido.",
-        rating: 5
-    },
-    {
-        id: 2,
-        name: "Carlos Rodríguez",
-        image: "https://randomuser.me/api/portraits/men/32.jpg",
-        text: "La variedad de juguetes es increíble. Mi gato nunca había estado tan entretenido. Definitivamente volveré a comprar.",
-        rating: 5
-    },
-    {
-        id: 3,
-        name: "Ana Martínez",
-        image: "https://randomuser.me/api/portraits/women/68.jpg",
-        text: "Excelente atención al cliente y productos de primera. El alimento premium que compré aquí mejoró mucho el pelaje de mi perro.",
-        rating: 4
-    }
+  {
+    id: 1,
+    name: "María González",
+    image: "https://randomuser.me/api/portraits/women/44.jpg",
+    text: "¡Me encanta PetZone! Encontré la cama perfecta para mi Golden Retriever. La calidad es excelente y el envío fue súper rápido.",
+    rating: 5
+  },
+  {
+    id: 2,
+    name: "Carlos Rodríguez",
+    image: "https://randomuser.me/api/portraits/men/32.jpg",
+    text: "La variedad de juguetes es increíble. Mi gato nunca había estado tan entretenido. Definitivamente volveré a comprar.",
+    rating: 5
+  },
+  {
+    id: 3,
+    name: "Ana Martínez",
+    image: "https://randomuser.me/api/portraits/women/68.jpg",
+    text: "Excelente atención al cliente y productos de primera. El alimento premium que compré aquí mejoró mucho el pelaje de mi perro.",
+    rating: 4
+  }
 ];
 
 function Reviews() {
-    return (
-        <ReviewsContainer>
-            <div className="container">
-                <SectionTitle>Lo que dicen nuestros <span>Clientes</span></SectionTitle>
-                <ReviewsGrid>
-                    {reviewsData.map(review => (
-                        <ReviewCard key={review.id}>
-                            <QuoteIcon />
-                            <ReviewText>"{review.text}"</ReviewText>
-                            <UserInfo>
-                                <Avatar src={review.image} alt={review.name} />
-                                <UserDetails>
-                                    <UserName>{review.name}</UserName>
-                                    <Stars>
-                                        {[...Array(review.rating)].map((_, i) => (
-                                            <FaStar key={i} />
-                                        ))}
-                                    </Stars>
-                                </UserDetails>
-                            </UserInfo>
-                        </ReviewCard>
+  return (
+    <ReviewsContainer>
+      <div className="container">
+        <SectionTitle>Lo que dicen nuestros <span>Clientes</span></SectionTitle>
+        <ReviewsGrid>
+          {reviewsData.map(review => (
+            <ReviewCard key={review.id}>
+              <QuoteIcon />
+              <ReviewText>"{review.text}"</ReviewText>
+              <UserInfo>
+                <Avatar src={review.image} alt={review.name} />
+                <UserDetails>
+                  <UserName>{review.name}</UserName>
+                  <Stars>
+                    {[...Array(review.rating)].map((_, i) => (
+                      <FaStar key={i} />
                     ))}
-                </ReviewsGrid>
-            </div>
-        </ReviewsContainer>
-    );
+                  </Stars>
+                </UserDetails>
+              </UserInfo>
+            </ReviewCard>
+          ))}
+        </ReviewsGrid>
+      </div>
+    </ReviewsContainer>
+  );
 }
 
 export default Reviews;

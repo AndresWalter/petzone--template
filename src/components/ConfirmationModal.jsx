@@ -2,7 +2,7 @@
 import React from 'react';
 import { FaExclamationTriangle } from 'react-icons/fa';
 
-// Styled Components
+// Componentes Estilizados
 import {
     StyledModalOverlay,
     StyledModalContent,

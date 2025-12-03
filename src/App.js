@@ -15,6 +15,15 @@ import CheckoutPage from './components/CheckoutPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
+import Carousel from './components/Carousel';
+import Footer from './components/Footer';
+
+// Imágenes del Carrusel (Locales)
+const carouselImages = [
+  '/banners/banner1.jpg',
+  '/banners/banner2.jpg',
+  '/banners/banner3.jpg'
+];
 
 function App() {
   return (
@@ -26,7 +35,12 @@ function App() {
             <Layout>
               <ToastContainer position="top-right" autoClose={3000} />
               <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={
+                  <>
+                    <Carousel images={carouselImages} />
+                    <Home />
+                  </>
+                } />
                 <Route path="/products" element={<ProductList />} />
                 <Route path="/products/:id" element={<ProductDetail />} />
                 <Route path="/cart" element={<CartPage />} />
@@ -44,10 +58,11 @@ function App() {
                 />
               </Routes>
             </Layout>
+            <Footer />
           </Router>
         </CartProvider>
       </ProductProvider>
-    </AuthProvider>
+    </AuthProvider >
   );
 }
 
