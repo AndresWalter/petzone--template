@@ -94,8 +94,21 @@
 
 @media (max-width: 768px) {
   .carousel-container {
-    height: 250px;
-    /* Menor altura en móviles */
+    height: auto;
+    min-height: 200px;
+  }
+
+  .carousel-track {
+    height: auto;
+  }
+
+  .carousel-slide {
+    height: auto;
+  }
+
+  .carousel-slide img {
+    height: auto;
+    object-fit: contain;
   }
 
   .carousel-arrow {
