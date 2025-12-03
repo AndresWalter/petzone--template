@@ -39,6 +39,12 @@ function ProductDetail() {
     };
 
     fetchProduct();
+    fetchProduct();
+  }, [id]);
+
+  // Scroll al inicio al cargar el componente
+  useEffect(() => {
+    window.scrollTo(0, 0);
   }, [id]);
 
   const handleAddToCart = () => {

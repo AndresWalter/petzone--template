@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import { FaEye, FaEyeSlash, FaCheck, FaTimes } from 'react-icons/fa';
 
-// Reutilizamos estilos o creamos nuevos con Styled Components para mantener consistencia
+// Reutilizamos estilos o creamos nuevos con Styled Components 
 const RegisterContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -243,7 +243,7 @@ function RegisterPage() {
             {errors.email && <ErrorText>{errors.email}</ErrorText>}
           </FormGroup>
 
-          {/* Password */}
+          {/* Contraseña */}
           <FormGroup>
             <Label htmlFor="password">Contraseña</Label>
             <InputWrapper>
@@ -274,7 +274,7 @@ function RegisterPage() {
             {errors.password && <ErrorText>{errors.password}</ErrorText>}
           </FormGroup>
 
-          {/* Confirmar Password */}
+          {/* Confirmar Contraseña */}
           <FormGroup>
             <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
             <InputWrapper>

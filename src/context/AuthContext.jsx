@@ -14,12 +14,12 @@ export const useAuth = () => {
 };
 
 // URL de la API para usuarios
-// Asumimos que la variable de entorno apunta a .../productos, así que la ajustamos para .../users
+
 const API_URL = process.env.REACT_APP_API_URL
     ? process.env.REACT_APP_API_URL.replace('/productos', '/users')
     : 'https://68f92640deff18f212b8ca24.mockapi.io/api/v1/users';
 
-// Credenciales de respaldo (para admin/demo si no están en la API)
+// Credenciales de respaldo (para admin/demo si no están en la API)_  Eliminar el FALLBACK_USERS para producción.
 const FALLBACK_USERS = [
     { username: 'admin', password: 'admin123', name: 'Administrador', role: 'admin' },
     { username: 'demo', password: 'demo', name: 'Demo User', role: 'user' }
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
                 name: userData.name,
                 email: userData.email,
                 username: userData.username, // Usamos el username proporcionado por el usuario
-                password: userData.password, // NOTA: En producción, NUNCA guardar contraseñas en texto plano
+                password: userData.password, // NOTA: para la producción, NUNCA guardar contraseñas en texto plano
                 role: 'user',
                 createdAt: new Date().toISOString()
             };

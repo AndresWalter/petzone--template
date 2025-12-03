@@ -1,5 +1,7 @@
 # Gestor de Productos con React & Context API
 
+Proyecto Talento Tech_2025
+
 ## Descripción
 Esta aplicación es un sistema completo para la gestión de productos de una tienda de mascotas ("PetZone"). Permite a los administradores administrar el inventario (CRUD) y a los usuarios explorar productos, buscar, filtrar y agregarlos a un carrito de compras. La aplicación cuenta con un diseño moderno, responsivo y una experiencia de usuario fluida.
 

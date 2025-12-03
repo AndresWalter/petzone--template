@@ -16,7 +16,7 @@ import ConfirmationModal from './ConfirmationModal';
 import SearchBar from './SearchBar';
 import Pagination from './Pagination';
 
-// Styled Components
+// Componentes Estilizados
 import {
   StyledPageContainer,
   StyledHeader,
@@ -57,10 +57,16 @@ function ProductList() {
   // LÓGICA DE FILTRADO Y PAGINACIÓN
   // ============================================
 
-  // PASO 1: Filtrar productos según searchTerm
-  const filteredProducts = (products || []).filter(product =>
-    product && product.name && product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // PASO 1: Filtrar productos según searchTerm (Búsqueda flexible)
+  const filteredProducts = (products || []).filter(product => {
+    if (!product || !product.name) return false;
+
+    const searchWords = searchTerm.toLowerCase().trim().split(/\s+/);
+    const productName = product.name.toLowerCase();
+
+    // Verificar que TODAS las palabras de búsqueda estén en el nombre del producto
+    return searchWords.every(word => productName.includes(word));
+  });
 
   // PASO 2: Calcular índices para paginación
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -75,7 +81,7 @@ function ProductList() {
   }, [searchTerm]);
 
   // ============================================
-  // HANDLERS
+  // MANEJADORES
   // ============================================
 
   const handleAddToCart = (product) => {
@@ -160,7 +166,7 @@ function ProductList() {
       </Helmet>
 
       <div className="container">
-        {/* Header Section */}
+        {/* Sección de Encabezado */}
         <div className="row mb-4 align-items-center">
           <div className="col-md-8">
             <StyledHeader className="text-md-start text-center mb-0">
@@ -192,10 +198,10 @@ function ProductList() {
           onSuccess={handleFormSuccess}
         />
 
-        {/* Search Bar */}
+        {/* Barra de Búsqueda */}
         <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-        {/* Products Grid */}
+        {/* Cuadrícula de Productos */}
         {currentProducts.length === 0 ? (
           <div className="text-center py-5">
             <h4 style={{ color: '#6b7280' }}>😔 No se encontraron productos</h4>
@@ -271,7 +277,7 @@ function ProductList() {
           </div>
         )}
 
-        {/* Pagination */}
+        {/* Paginación */}
         <Pagination
           currentPage={currentPage}
           productsPerPage={productsPerPage}
@@ -280,7 +286,7 @@ function ProductList() {
         />
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Modal de Confirmación de Eliminación */}
       <ConfirmationModal
         isOpen={deleteModal.isOpen}
         title="Eliminar Producto"

@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { FaPaw, FaHome, FaShoppingBag, FaShoppingCart, FaUser, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa';
 
 // ==========================================
-// STYLED COMPONENTS (NAVBAR)
+// COMPONENTES ESTILIZADOS (BARRA DE NAVEGACIÓN)
 // ==========================================
 
 const NavContainer = styled.nav`
@@ -35,7 +35,7 @@ const LogoLink = styled(Link)`
   font-size: 1.5rem;
   font-weight: 800;
   transition: transform 0.3s ease;
-  z-index: 1001; /* Ensure logo is above mobile menu */
+  z-index: 1001; /* Asegura que el logo esté sobre el menú móvil */
 
   &:hover {
     transform: scale(1.05);
@@ -129,15 +129,11 @@ const UserSection = styled.div`
   gap: 1.5rem;
 
   @media (max-width: 768px) {
-     /* Move UserSection inside NavLinks for mobile or keep separate? 
-        For simplicity, let's keep it visible but maybe adjust spacing.
-        Actually, let's put it inside the mobile menu for cleaner look on mobile.
-     */
      display: none; 
   }
 `;
 
-// Mobile User Section inside menu
+// Sección de usuario móvil dentro del menú
 const MobileUserSection = styled.div`
   display: none;
   flex-direction: column;
@@ -216,7 +212,7 @@ function Navbar() {
           <FaPaw /> PetZone
         </LogoLink>
 
-        {/* Mobile Icon */}
+        {/* Icono Móvil */}
         <MobileIcon onClick={toggleMenu}>
           {isOpen ? <FaTimes /> : <FaBars />}
         </MobileIcon>
@@ -234,7 +230,7 @@ function Navbar() {
             {cartCount > 0 && <CartBadge>{cartCount}</CartBadge>}
           </NavLinkItem>
 
-          {/* Mobile User Section */}
+          {/* Sección de Usuario Móvil */}
           <MobileUserSection>
             {isAuthenticated ? (
               <>

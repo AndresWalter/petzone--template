@@ -60,7 +60,7 @@ const useFormValidation = (initialState) => {
             }
         }
 
-        // Validación de Nombre (Opcional, pero común en registro)
+        // Validación de Nombre 
         if (values.name !== undefined && !values.name.trim()) {
             tempErrors.name = "El nombre es obligatorio";
             isValid = false;
